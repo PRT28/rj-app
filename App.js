@@ -1,20 +1,64 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, UIManager } from 'react-native';
+import { useEffect,useState } from 'react';
+import * as Font from 'expo-font';
+import { Landing } from './Screens/Landing';
+import ClickableNonLinearItems from './Screens/Hello';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainScreen from './Screens/MainScreen';
+import CommitmentFlow from './Screens/MysteryJoy';
+import Toast from 'react-native-toast-message';
+import { Provider } from 'react-redux';
+import store from './reducers/reducer';
+import { Splash } from './Screens/Splash';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const getFont = () => Font.loadAsync({
+  'Recursive-Bold':require('./assets/Fonts/Recursive_Casual-Bold.ttf'),
+  'Recursive-Light':require('./assets/Fonts/Recursive_Casual-Light.ttf'),
+  'Recursive-Medium':require('./assets/Fonts/Recursive_Casual-Medium.ttf'),
+});
+
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  const Stack = createStackNavigator();
+  const [fontLoaded,setFontsLoaded]=useState(false);
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await getFont();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setFontsLoaded(true);
+      }
+    }
+    prepare();
+  }, []);
+
+  if (fontLoaded){
+    return (
+      <>
+      <Provider store={store}>
+        <NavigationContainer >
+          <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Splash" component={Splash} />
+            <Stack.Screen name="Home" component={Landing} />
+            <Stack.Screen name="Interests" component={ClickableNonLinearItems} />
+            <Stack.Screen name="mystery" component={CommitmentFlow} />
+            <Stack.Screen name="Main" component={MainScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <Toast />
+      </Provider>
+      </>
+      
+    );
+  }
+}
