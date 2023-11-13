@@ -33,19 +33,13 @@ const Styles=StyleSheet.create({
         width:'100%',
         
     },
-    anim: {
-        position: 'absolute',
-        left: -70
-    },
     mainHeading:{
         fontFamily:'Recursive-Bold',
         fontSize:36
     },
     Content:{
         padding:15,
-        paddingTop: 0,
-        position: 'absolute',
-        bottom: 20
+        paddingTop: 10,
     },
     Paragraph:{
         fontSize:16,

@@ -27,23 +27,25 @@ export const login = (navigation, payload,setLoginOpen) => {
         })
     }
 }
-export const register = (payload, setSignonOpen, navigation) => {
+export const register = (payload, setSignonOpen, navigation, actions) => {
     return async dispatch => {
         dispatch({type: 'AUTH_LOAD'});
         return api.register(payload)
                 .then(data => {
-                    dispatch({type: 'AUTH_SUCCESS', payload: data.user})
-                    if (data.response.status !== 200) {
+                    console.log(data);
+                    if (data.status !== 200) {
                         Toast.show({
                             type: 'error',
                             text1: 'Register Failed',
                         })
                     } else {
+                        actions.resetForm();
+                        dispatch({type: 'AUTH_SUCCESS', payload: data.data.user});
+                        dispatch({type: 'SET_TOKEN', payload: data.data.token});
+                        AsyncStorage.setItem('token', data.data.token)
                         setSignonOpen(false)
                         navigation.navigate('Interests');
                     }
-                    // setSignonOpen(false)
-                    // navigation.navigate('Interests');
                 })
                 .catch(err => {
                     console.log(err.response.data.error)

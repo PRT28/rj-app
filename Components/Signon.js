@@ -32,9 +32,9 @@ export function Signon({navigation, setSignonOpen}){
                             "zip_code": values.Zipcode,
                             "role": 2
                           }
-                        dispatch(register(response, setSignonOpen, navigation))
+                          console.log(response);
+                        dispatch(register(response, setSignonOpen, navigation, actions))
                         //AddReview(review);
-                        actions.resetForm();
                     }}>
                     {(props)=>(
                         <View style={Styles.Form}>
@@ -86,7 +86,7 @@ export function Signon({navigation, setSignonOpen}){
 }
 const Styles=StyleSheet.create({
     Content:{
-        top:'20%',
+        top:'33%',
         borderTopEndRadius:30,
         borderTopStartRadius:30,
         backgroundColor: '#FFF8F1',

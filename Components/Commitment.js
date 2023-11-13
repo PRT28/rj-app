@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
 import CommitmentComplete from './CommitmentComplete';
 import { getAssignedCommitments } from '../action/commitment';
+import { shareAsset } from '../action/asset';
 
 const Commitment = () => {
   const dispatch = useDispatch();
@@ -72,7 +73,7 @@ const Commitment = () => {
               {/* <Text style={styles.taskTimer}>{task.timer}</Text> */}
             </View>
             <View style={styles.iconContainer}>
-              <Ionicons name={task.icon} size={24} color="black" />
+                <Image style={{width: 60, height: 60}} source={require('../assets/Resources/Images/timer.gif')} />
             </View>
           </TouchableOpacity>
         ))}
@@ -93,7 +94,11 @@ const Commitment = () => {
       {step === 3 && <View style={styles.stepContainer}>
           <Image source={assetData.url ? { uri: assetData.url} : require('../assets/Resources/Images/temp.png')} style={styles.image} />
           <View style={styles.successTextContainer}>
-            <Button colorScheme={2} onPress={() => {setStep(0); setCurrentTask(null); setCommitmentList(commitmentList.splice(0, commitmentList.length-1)) }}>Next Joy</Button>
+            <Text style={[styles.taskHeading, {textAlign: 'center'}]}>Joy for you!!</Text>
+            <View style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
+              <Button colorScheme={2} onPress={() => {setStep(0); setCurrentTask(null); setCommitmentList(commitmentList.splice(0, commitmentList.length-1)) }}>Next Joy</Button>
+              <Button colorScheme={1} onPress={() => {setStep(0); shareAsset(token, assetData.url ? assetData._id : '41224d776a326fb40f000001'); setCurrentTask(null); setCommitmentList(commitmentList.splice(0, commitmentList.length-1)) }}>Share <Ionicons name="share-social" size={17} color="#FFF" /></Button>
+            </View>
           </View>
         </View>}
       {step === 4 && <View style={styles.stepContainer}>

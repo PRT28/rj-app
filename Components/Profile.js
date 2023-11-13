@@ -53,7 +53,7 @@ const ProfileComponent = ({user}) => {
       <Ionicons name={icon} size={24} color="black" />
       <Text style={styles.menuItemLabel}>{label}</Text>
       </View>
-      <Image source={require('../assets/Resources/Images/arrow-right.svg')} />
+      <Arrow />
     </TouchableOpacity>
     )
   }

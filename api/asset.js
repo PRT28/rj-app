@@ -1,8 +1,8 @@
 import axios from "axios";
 import { config } from "../config/config";
 
-export const randomAsset = async token => {
-    const url = `${config.baseUrl}${config.asset}`;
+export const randomAsset = async (token, type) => {
+    const url = `${config.baseUrl}${config.asset}?type=${type}`;
     console.log('abc', token)
     const headers = {
         "Authorization": `${token}`
@@ -12,4 +12,16 @@ export const randomAsset = async token => {
     })
                     .then(data => data)
                     .catch(err => { throw err });
+}
+
+export const shareAsset = async (token, id) => {
+    const url = `${config.baseUrl}${config.shareAsset}/${id}`
+    const headers = {
+        "Authorization": `${token}`
+    }
+    return axios.get(url, {
+        headers
+    })
+    .then(data => data)
+    .catch(err => { throw err });
 }

@@ -5,6 +5,7 @@ import { Button } from './Button';
 import MysteryJoy from '../Screens/MysteryJoy';
 import Statements from '../Screens/Statements';
 import Puzzle from '../Screens/Puzzle';
+import Key from '../assets/Resources/Images/key.svg'
 
 const NotificationListComponent = () => {
   const [step, setStep] = useState(0);
@@ -56,7 +57,7 @@ const NotificationListComponent = () => {
                     <Image source={require('../assets/Resources/Images/gift.png')} style={styles.image} />
                     <Text style={styles.text}>A gift from a Friend</Text>
                     <TouchableOpacity onPress={handleNextStep}>
-                    <Image source={require('../assets/Resources/Images/key.png')} style={styles.image} />
+                    <Key />
                     </TouchableOpacity>
                 </View>}
     </>

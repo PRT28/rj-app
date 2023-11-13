@@ -4,12 +4,11 @@ import {LinearGradient} from "expo-linear-gradient";
 import { Audio } from 'expo-av';
 import { useSelector } from "react-redux";
 export function Button({colorScheme,onPress,...props}){
-    const colorSchemes=[['#16B8D9','#9BEEFF','#16b8d9'],['#FFCDA3','#FFFAF5','#FFFFFF00'],['#FF7F11','#FFFAF5','#FFFFFF']];
+    const colorSchemes=[['#16B8D9','#9BEEFF','#16b8d9'],['#FF7F11','#FFFAF5','#FFFFFF']];
     const [sound, setSound] = useState();
     const {sound: playSound} = useSelector(state => state.asset);
     const clickFunc = async () => {
-        const { sound } = await Audio.Sound.createAsync( require('../assets/Resources/Sound/button.mp3')
-        );
+        const { sound } = await Audio.Sound.createAsync( require('../assets/Resources/Sound/button.mp3'));
         setSound(sound);
 
         console.log('Playing Sound');
@@ -30,7 +29,7 @@ export function Button({colorScheme,onPress,...props}){
       }, [sound]);
 
     return(
-        <TouchableOpacity onPress={clickFunc}>
+        <TouchableOpacity style={{overflow: 'hidden'}} onPress={clickFunc}>
             <LinearGradient colors={colorSchemes[colorScheme-1]} style={Styles.Button} locations={[0.81,0.97,1]}>
                 <View style={Styles.animation}>
                     <Image source={require('../assets/Resources/Images/button.gif')} />
@@ -51,12 +50,14 @@ const Styles=StyleSheet.create({
     Text:{
         fontSize:20,
         fontFamily:'Recursive-Medium',
-        textAlign:"center"
+        textAlign:"center",
+        color: '#FFF'
     },
     animation: {
         position: 'absolute',
-        right: 0,
-        width: '100%',
-        height: '100%'
+        left: 0,
+        top: '50%',
+        width: 100,
+        height: 30
     }
 })

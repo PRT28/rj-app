@@ -1,14 +1,15 @@
 import * as api from '../api/commitment';
 import Toast from 'react-native-toast-message';
 
-export const getSuggestion = (token, setStep)  => {
+export const getSuggestion = (token, setStep, setTitle)  => {
     return dispatch => {
         dispatch({type: 'STATEMENT_LOAD'});
         return api.statementSuggestion(token)
             .then(async data => {
                 console.log(data.data);
                 dispatch({type: 'STATEMENT_SUCCESS', payload: data.data});
-                setStep(4);
+                setTitle(data.data[0])
+                setStep(1);
             })
             .catch(err => {
                 console.log(err.response.data);

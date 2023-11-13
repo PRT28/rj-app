@@ -53,7 +53,7 @@ const LoginAnim = () => {
 
 const Styles=StyleSheet.create({
     animWrapper: {
-        height: 400,
+        height: '45%',
         display: 'flex',
         justifyContent: 'space-between',
         flexDirection: 'row',

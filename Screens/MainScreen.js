@@ -1,7 +1,6 @@
 // App.js
 import React, {useEffect, useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
 import Mystery from './Mystery';
 import Commitment from '../Components/Commitment';
 import NotificationComponent from '../Components/Notifications';
@@ -10,7 +9,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setToken, getAuthDetails } from '../action/auth';
-import { Text } from 'react-native';
+import { SafeAreaView, ActivityIndicator } from 'react-native';
+import { Audio } from 'expo-av';
+
+import Profile from '../assets/Resources/Images/profile.svg';
+import ProfileFocused from '../assets/Resources/Images/profile-focused.svg';
+import Notification from '../assets/Resources/Images/notification.svg';
+import NotificationFocused from '../assets/Resources/Images/notification-focused.svg';
+import Home from '../assets/Resources/Images/home.svg';
+import HomeFocused from '../assets/Resources/Images/home-focued.svg';
+import Game from '../assets/Resources/Images/game.svg';
+import GameFocused from '../assets/Resources/Images/game-focused.svg';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -49,53 +59,84 @@ const MainScreen = () => {
     console.log(data)
   }, [data])
 
+  const playSound = async () => {
+    const { sound } = await Audio.Sound.createAsync( require('../assets/Resources/Sound/button.mp3'));
+    await sound.playAsync();
+  }
+
 
   return (
     <>
-    {loading && <Text>Loading...</Text>}
-    <Tab.Navigator>
+    {loading && <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </SafeAreaView>}
+    {!loading && <Tab.Navigator>
         <Tab.Screen
           name=" "
-          children={() => <Mystery />}
+          children={() => {
+            playSound();
+            return <Mystery />
+          }}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="home" color={color} size={size} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <HomeFocused /> : <Home />
             ),
+            tabBarStyle: {
+              padding: 25
+            },
             headerShown: false
           }}
         />
         <Tab.Screen
           name="  "
-          children={() => <Commitment />}
+          children={() => {
+            playSound();
+            return <Commitment />
+          }}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="cart" color={color} size={size} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <GameFocused /> : <Game />
             ),
+            tabBarStyle: {
+              padding: 25
+            },
             headerShown: false
           }}
         />
        
         <Tab.Screen
           name="    "
-          children={() => <NotificationComponent />}
+          children={() => {
+            playSound();
+            return <NotificationComponent />
+          }}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" color={color} size={size} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <NotificationFocused /> : <Notification />
             ),
+            tabBarStyle: {
+              padding: 25
+            },
             headerShown: false
           }}
         />
         {data.user && <Tab.Screen
           name="     "
-          children={() => <ProfileComponent user={data.user} />}
+          children={() => {
+            playSound();
+            return <ProfileComponent user={data.user} />;
+          }}
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={size} />
+            tabBarIcon: ({ focused }) => (
+              focused ? <ProfileFocused /> : <Profile />
             ),
+            tabBarStyle: {
+              padding: 25
+            },
             headerShown: false
           }}
         />}
-      </Tab.Navigator>
+      </Tab.Navigator>}
     </>
   );
 };

@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, LayoutAnimation } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, LayoutAnimation, Modal } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPuzzle } from '../action/puzzle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '../Components/Button';
+import { shareAsset } from '../action/asset';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Hr } from '../Components/Hr';
+import Help from '../assets/Resources/Images/help.svg'
+import { Ionicons } from '@expo/vector-icons';
 
 const PuzzleFlow = ({setState}) => {
   const [step, setStep] = useState(0);
@@ -13,6 +18,7 @@ const PuzzleFlow = ({setState}) => {
   const [counter, setCounter] = useState(5);
   const [full, setFull] = useState(false);
   const {data: assetData} = useSelector(state => state.asset);
+  const [help, setHelp] = useState(false);
   console.log(data);
 
   useEffect(() => {
@@ -75,10 +81,30 @@ const PuzzleFlow = ({setState}) => {
       case 0:
         return (
           <View style={[styles.stepContainer]}>
+            <TouchableOpacity onPress={() => setHelp(true)}  style={{position: 'absolute', top:-20, right: 20}}>
+              <Help />
+            </TouchableOpacity>
             <Text style={[styles.text, { marginBottom: '10%' }]}>You've been assigned a puzzle</Text>
             <Image source={require('../assets/Resources/Images/believe.png')} style={styles.image} />
             <Text style={[styles.text, {marginTop: '5%'}]}>Solve a puzzle to win...!</Text>
             <Button colorScheme={2}  onPress={handleNextStep}>Solve it</Button>
+            <Modal visible={help} animationType="slide" onRequestClose={() => setHelp(false)} transparent={true}>
+              <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                <View  style={styles.modal}>
+                  <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
+                    <Text style={{color: '#FFF', fontSize: 20, fontFamily: 'Recursive-Bold' }}>What is Puzzle?</Text>
+                    <TouchableOpacity>
+                      <MaterialCommunityIcons name={"close"} size={23} color={"white"} onPress={() => setHelp(false)} />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={{marginBottom: 15}}>
+                    <Hr color="#FFF" />
+                  </View>
+                  <Text style={{flexWrap: 'wrap', color: '#FFF', fontSize: 15, fontFamily: 'Recursive-Bold'}}>Commitment refers to the state or quality of being dedicated, loyal, or devoted to a cause, activity, goal, or relationship. It involves a sense of responsibility and a willingness to invest time, effort, and resources to fulfill obligations or achieve desired outcomes. </Text>
+
+                </View>
+              </View>
+            </Modal>
           </View>
       );
       case 1:
@@ -150,8 +176,10 @@ const PuzzleFlow = ({setState}) => {
           return (
             <View style={styles.stepContainer}>
               <Image source={assetData.url ? { uri: assetData.url} : require('../assets/Resources/Images/temp.png')} style={styles.image} />
-              <View style={styles.successTextContainer}>
+              <Text style={[styles.successText, {textAlign: 'center'}]}>Joy for you!!</Text>
+              <View style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
                 <Button colorScheme={2} onPress={() => setState(0)}>Next Joy</Button>
+                <Button colorScheme={1} onPress={() => { setState(0); shareAsset(token, assetData.url ? assetData._id : '41224d776a326fb40f000001'); }}>Share <Ionicons name="share-social" size={17} color="#FFF" /></Button>
               </View>
             </View>
           );

@@ -84,7 +84,7 @@ const CommitmentFlow = ({ setState }) => {
                   <View style={{marginBottom: 15}}>
                     <Hr color="#FFF" />
                   </View>
-                  <Text style={{flexWrap: 'wrap', color: '#FFF', fontSize: 15, fontFamily: 'Recursive-Bold'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sed bibendum nisi. Curabitur id ornare mi, in venenatis enim. Vivamus faucibus, nisi ac interdum euismod, justo enim pretium felis, molestie consectetur odio risus quis est. Fusce magna velit, semper vitae arcu vitae, viverra ultrices urna. Aliquam nec erat et justo fermentum consectetur. Cras vel purus nec arcu ultrices cursus. Suspendisse lacinia tortor eget massa euismod, sed lobortis arcu interdum. Fusce convallis cursus quam, vitae finibus felis rutrum sit amet. Nullam interdum scelerisque leo. Fusce finibus metus nulla, ut ullamcorper justo semper in. </Text>
+                  <Text style={{flexWrap: 'wrap', color: '#FFF', fontSize: 15, fontFamily: 'Recursive-Bold'}}>Commitment refers to the state or quality of being dedicated, loyal, or devoted to a cause, activity, goal, or relationship. It involves a sense of responsibility and a willingness to invest time, effort, and resources to fulfill obligations or achieve desired outcomes. </Text>
 
                 </View>
               </View>
@@ -127,6 +127,9 @@ const CommitmentFlow = ({ setState }) => {
             <Text style={[styles.text, {fontSize: 24, marginBottom: 15, padding: 10}]}>Suggestions</Text>
             {
               commitment.map((d, i) => i > 0 && <TouchableOpacity style={styles.suggestionWrapper} onPress={() => assignHandle(d.suggestion_text, ' ', ' ', false)}>
+                <View style={{position: 'absolute', top: 0, right: 0, backgroundColor: '#00D3FF', borderBottomLeftRadius: 4, padding: 8}}>
+                  <Text style={styles.categoryText}>{d.category_text}</Text>
+                </View>
                 <Text style={[styles.text, {fontSize: 15, textAlign: 'left'}]}>{d.suggestion_text}</Text>
               </TouchableOpacity>)
             }
@@ -185,6 +188,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 600,
   },
+  categoryText: {
+    color: '#000',
+    textAlign: 'center',
+    fontFamily: 'Recursive-Bold',
+    fontSize: 10,
+    fontWeight: 600,
+  },
   input: {
     height: 150,
     width: 300,
@@ -209,6 +219,7 @@ const styles = StyleSheet.create({
     padding: 32,
     width: '100%',
     marginBottom: 10,
+    position: 'relative'
   },
   fullImage: {
     width: 400,

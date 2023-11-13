@@ -9,7 +9,9 @@ import Toast from 'react-native-toast-message';
 import { assignStatement } from '../action/commitment';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Hr } from '../Components/Hr';
+import { shareAsset } from '../action/asset';
 import Help from '../assets/Resources/Images/help.svg'
+import { Ionicons } from '@expo/vector-icons';
 
 const StatementFlow = ({setState}) => {
   const [step, setStep] = useState(0);
@@ -22,11 +24,12 @@ const StatementFlow = ({setState}) => {
   const {statement} = useSelector(state => state.commitment)
   const {data: assetData} = useSelector(state => state.asset);
   const [help, setHelp] = useState(false);
+  const [title, setTitle] = useState('Enter your statements')
 
   const suggestStatment = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      dispatch(getSuggestion(token, setStep))
+      dispatch(getSuggestion(token, setStep, setTitle))
     } catch (error) {
       console.error('Error checking token:', error);
     }
@@ -108,18 +111,19 @@ const StatementFlow = ({setState}) => {
       case 0:
         return (
           <View style={[styles.stepContainer]}>
+            
             <TouchableOpacity onPress={() => setHelp(true)}  style={{position: 'absolute', top:-20, right: 20}}>
               <Help />
             </TouchableOpacity>
             <Text style={[styles.text, { marginBottom: '10%' }]}>You've been assigned a statement</Text>
             <Image source={require('../assets/Resources/Images/believe.png')} style={styles.image} />
             <Text style={[styles.text, {marginTop: '5%'}]}>Write a statement of commitment and follow it!</Text>
-            <Button colorScheme={2}  onPress={handleNextStep}>Write it Now</Button>
+            <Button colorScheme={2}  onPress={suggestStatment}>Write it Now</Button>
             <Modal visible={help} animationType="slide" onRequestClose={() => setHelp(false)} transparent={true}>
               <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View  style={styles.modal}>
                   <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10}}>
-                    <Text style={{color: '#FFF', fontSize: 20, fontFamily: 'Recursive-Bold' }}>What is Commitment?</Text>
+                    <Text style={{color: '#FFF', fontSize: 20, fontFamily: 'Recursive-Bold' }}>What is Statement?</Text>
                     <TouchableOpacity>
                       <MaterialCommunityIcons name={"close"} size={23} color={"white"} onPress={() => setHelp(false)} />
                     </TouchableOpacity>
@@ -127,7 +131,7 @@ const StatementFlow = ({setState}) => {
                   <View style={{marginBottom: 15}}>
                     <Hr color="#FFF" />
                   </View>
-                  <Text style={{flexWrap: 'wrap', color: '#FFF', fontSize: 15, fontFamily: 'Recursive-Bold'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sed bibendum nisi. Curabitur id ornare mi, in venenatis enim. Vivamus faucibus, nisi ac interdum euismod, justo enim pretium felis, molestie consectetur odio risus quis est. Fusce magna velit, semper vitae arcu vitae, viverra ultrices urna. Aliquam nec erat et justo fermentum consectetur. Cras vel purus nec arcu ultrices cursus. Suspendisse lacinia tortor eget massa euismod, sed lobortis arcu interdum. Fusce convallis cursus quam, vitae finibus felis rutrum sit amet. Nullam interdum scelerisque leo. Fusce finibus metus nulla, ut ullamcorper justo semper in. </Text>
+                  <Text style={{flexWrap: 'wrap', color: '#FFF', fontSize: 15, fontFamily: 'Recursive-Bold'}}>Commitment refers to the state or quality of being dedicated, loyal, or devoted to a cause, activity, goal, or relationship. It involves a sense of responsibility and a willingness to invest time, effort, and resources to fulfill obligations or achieve desired outcomes. </Text>
 
                 </View>
               </View>
@@ -140,7 +144,7 @@ const StatementFlow = ({setState}) => {
             <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
                 <Image source={require('../assets/Resources/Images/fly.png')} style={full ? styles.fullImage : styles.image} />
             </TouchableOpacity>
-            <Text style={[styles.text, { marginBottom: 10, marginTop: 20 }]}>Step 1: Enter your statements</Text>
+            <Text style={[styles.text, { marginBottom: 10, marginTop: 20 }]}>{title}</Text>
             <TextInput
               style={styles.input}
               placeholder="Statement 1"
@@ -161,7 +165,7 @@ const StatementFlow = ({setState}) => {
             />
             <View style={styles.footer}>
               <Button Styles={styles.Button} colorScheme={2} onPress={() => assignHandle(true, statements[0])}>Save</Button>
-              <Button Styles={styles.Button} colorScheme={1} onPress={() => suggestStatment()}>Suggestions</Button>
+              <Button Styles={styles.Button} colorScheme={1} onPress={() => setStep(4)}>Suggestions</Button>
             </View>
           </ScrollView>
         );
@@ -185,8 +189,14 @@ const StatementFlow = ({setState}) => {
           <View style={styles.stepContainer}>
            <Image source={assetData.url ? { uri: assetData.url} : require('../assets/Resources/Images/temp.png')} style={styles.image} />
             <View style={styles.successTextContainer}>
-              <Button colorScheme={2} onPress={() => setState(0)}>Next Joy</Button>
+              <Text style={[styles.successText, {textAlign: 'center'}]}>Joy for you!!</Text>
+              <View style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
+                <Button colorScheme={2} onPress={() => setState(0)}>Next Joy</Button>
+                <Button colorScheme={1} onPress={() => { setState(0); shareAsset(token, assetData.url ? assetData._id : '41224d776a326fb40f000001'); }}>Share <Ionicons name="share-social" size={17} color="#FFF" /></Button>
+              </View>
             </View>
+
+            
           </View>
         );
         case 4:
@@ -194,7 +204,10 @@ const StatementFlow = ({setState}) => {
             <View style={[styles.stepContainer, {justifyContent: 'flex-start', alignItems: 'flex-start'}]}>
               <Text style={[styles.text, {fontSize: 24, marginBottom: 15, padding: 10}]}>Suggestions</Text>
               {
-                statement.map(d => <TouchableOpacity style={styles.suggestionWrapper} onPress={() => assignHandle(false, statements[0])}>
+                statement.map((d, i) => i > 0 && <TouchableOpacity style={styles.suggestionWrapper} onPress={() => { setTitle(d.suggestion_text); setStep(1); }}>
+                  <View style={{position: 'absolute', top: 0, right: 0, backgroundColor: '#00D3FF', borderBottomLeftRadius: 4, padding: 8}}>
+                    <Text style={styles.categoryText}>{d.category_text}</Text>
+                  </View>
                   <Text style={[styles.text, {fontSize: 15, textAlign: 'left'}]}>{d.suggestion_text}</Text>
                 </TouchableOpacity>)
               }
@@ -241,6 +254,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#fff',
     width: '100%'
+  },
+  categoryText: {
+    color: '#000',
+    textAlign: 'center',
+    fontFamily: 'Recursive-Bold',
+    fontSize: 10,
+    fontWeight: 600,
   },
   input: {
     height: 80,
@@ -300,6 +320,7 @@ const styles = StyleSheet.create({
     padding: 32,
     width: '100%',
     marginBottom: 10,
+    position: 'relative'
   },
   fullImage: {
     width: 350,
