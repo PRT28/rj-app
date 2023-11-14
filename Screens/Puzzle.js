@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   countContainer: {
-    borderRadius: '50%',
+    borderRadius: 50,
     borderWidth: 3,
     borderStyle: 'solid',
     borderColor: '#FFB372',

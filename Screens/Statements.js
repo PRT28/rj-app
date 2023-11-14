@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, LayoutAnimation, Modal, Animated, Dimensions  } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../Components/Button';
