@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, LayoutAnimation, Modal } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, LayoutAnimation, Modal, Animated, Dimensions  } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../Components/Button';
 import { getSuggestion } from '../action/commitment';
@@ -25,6 +25,7 @@ const StatementFlow = ({setState}) => {
   const {data: assetData} = useSelector(state => state.asset);
   const [help, setHelp] = useState(false);
   const [title, setTitle] = useState('Enter your statements')
+  const animation = useRef(new Animated.ValueXY({x: (Dimensions.get('screen').width * 90)/100, y: (Dimensions.get('screen').height * 30)/100})).current;
 
   const suggestStatment = async () => {
     try {
@@ -64,15 +65,22 @@ const StatementFlow = ({setState}) => {
   }, [counter, step])
 
   const toggleBox = () => {
-    LayoutAnimation.configureNext({
-      duration: 500,
-      create: {type: 'linear'},
-      update: {type: 'easeInEaseOut'},
-      delete: {type: 'linear'},
-    });
-    setFull(!full);
+    if (full) {
+      Animated.timing(animation, {
+        toValue: {x: (Dimensions.get('screen').width * 90)/100, y: (Dimensions.get('screen').height * 30)/100},
+        duration: 2000,
+        useNativeDriver: false,
+    }).start()
+    setFull(false);
+    } else {
+      Animated.timing(animation, {
+        toValue: {x: Dimensions.get('screen').width, y: Dimensions.get('screen').height},
+        duration: 2000,
+        useNativeDriver: false,
+    }).start()
+    setFull(true)
+    }
   };
-
   const assignHandle = async (is_custom, text) => {
     const token = await AsyncStorage.getItem('token');
     if (is_custom) {
@@ -142,7 +150,7 @@ const StatementFlow = ({setState}) => {
         return (
           <ScrollView automaticallyAdjustKeyboardInsets contentContainerStyle={[styles.stepContainer, {display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}]}>
             <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
-                <Image source={require('../assets/Resources/Images/fly.png')} style={full ? styles.fullImage : styles.image} />
+                <Animated.Image source={require('../assets/Resources/Images/fly.png')} style={{width: animation.x, height: animation.y, position: full ? 'absolute' : 'relative', top: full ? -250 : 0, left: full ? -195 : 0}} />
             </TouchableOpacity>
             <Text style={[styles.text, { marginBottom: 10, marginTop: 20 }]}>{title}</Text>
             <TextInput

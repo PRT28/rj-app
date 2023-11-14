@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, LayoutAnimation, Modal } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, Animated, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPuzzle } from '../action/puzzle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +19,8 @@ const PuzzleFlow = ({setState}) => {
   const [full, setFull] = useState(false);
   const {data: assetData} = useSelector(state => state.asset);
   const [help, setHelp] = useState(false);
+  const animation = useRef(new Animated.ValueXY({x: (Dimensions.get('screen').width * 90)/100, y: (Dimensions.get('screen').height * 30)/100})).current;
+
   console.log('puzzle', data);
 
   useEffect(() => {
@@ -75,13 +77,21 @@ const PuzzleFlow = ({setState}) => {
   };
 
   const toggleBox = () => {
-    LayoutAnimation.configureNext({
-      duration: 500,
-      create: {type: 'linear'},
-      update: {type: 'easeInEaseOut'},
-      delete: {type: 'linear'},
-    });
-    setFull(!full);
+    if (full) {
+      Animated.timing(animation, {
+        toValue: {x: (Dimensions.get('screen').width * 90)/100, y: (Dimensions.get('screen').height * 30)/100},
+        duration: 2000,
+        useNativeDriver: false,
+    }).start()
+    setFull(false);
+    } else {
+      Animated.timing(animation, {
+        toValue: {x: Dimensions.get('screen').width, y: Dimensions.get('screen').height},
+        duration: 2000,
+        useNativeDriver: false,
+    }).start()
+    setFull(true)
+    }
   };
 
   const renderStepContent = () => {
@@ -119,7 +129,7 @@ const PuzzleFlow = ({setState}) => {
         return (
           <View style={styles.stepContainer}>
             <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
-                <Image source={require('../assets/Resources/Images/fly.png')} style={full ? styles.fullImage : styles.image} />
+                <Animated.Image source={require('../assets/Resources/Images/fly.png')} style={{width: animation.x, height: animation.y, position: full ? 'absolute' : 'relative', top: full ? -250 : 0, left: full ? -195 : 0}} />
             </TouchableOpacity>
             <Text style={styles.text}>{data.question}</Text>
             {data.questionType === 1 && <>
