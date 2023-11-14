@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image,SafeAreaView, ActivityIndicator  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
 import CommitmentComplete from './CommitmentComplete';
-import { getAssignedCommitments } from '../action/commitment';
+import { getAssignedCommitments, completeCommitment } from '../action/commitment';
 import { shareAsset } from '../action/asset';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Commitment = () => {
   const dispatch = useDispatch();
-  // const {commitmentList} = useSelector(state => state.commitment);
+  const {commitmentList, loading} = useSelector(state => state.commitment);
   const {data:assetData} = useSelector(state => state.asset);
-  const [commitmentList, setCommitmentList] = useState([
-    {
-      text: "i'll call my mom",
-      discription: "I'll call my mom"
-    },
-    {
-      text: "i'll call my mom",
-      discription: "I'll call my mom"
-    }
-  ])
+  // const [commitmentList, setCommitmentList] = useState([
+  //   {
+  //     text: "i'll call my mom",
+  //     discription: "I'll call my mom"
+  //   },
+  //   {
+  //     text: "i'll call my mom",
+  //     discription: "I'll call my mom"
+  //   }
+  // ])
   const {token} = useSelector(state => state.auth);
   const [step, setStep] = useState(0);
   const [currentTask, setCurrentTask] = useState();
@@ -54,13 +55,22 @@ const Commitment = () => {
     
   }, [counter, step])
 
+  const completeHandle = async () => {
+    const token = await AsyncStorage.getItem('token');
+    dispatch(completeCommitment(token, currentTask._id, setStep, setCurrentTask));
+  }
+
   return (
     <>
       {step === 0 && <View style={styles.container}>
         <Text style={styles.heading}>Commitment</Text>
+        {loading && <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </SafeAreaView>}
+        {!loading && commitmentList.length === 0 && <Text style={[styles.successText, {marginTop: 100}]}>No Active commitments...</Text>}
         {commitmentList.map((task) => (
           <TouchableOpacity
-            key={task.id}
+            key={task._id}
             onPress={() => {setStep(1); setCurrentTask(task); }}
             style={[
               styles.taskContainer,
@@ -96,7 +106,7 @@ const Commitment = () => {
           <View style={styles.successTextContainer}>
             <Text style={[styles.taskHeading, {textAlign: 'center'}]}>Joy for you!!</Text>
             <View style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
-              <Button colorScheme={2} onPress={() => {setStep(0); setCurrentTask(null); setCommitmentList(commitmentList.splice(0, commitmentList.length-1)) }}>Next Joy</Button>
+              <Button colorScheme={2} onPress={() => completeHandle()}>Next Joy</Button>
               <Button colorScheme={1} onPress={() => {setStep(0); shareAsset(token, assetData.url ? assetData._id : '41224d776a326fb40f000001'); setCurrentTask(null); setCommitmentList(commitmentList.splice(0, commitmentList.length-1)) }}>Share <Ionicons name="share-social" size={17} color="#FFF" /></Button>
             </View>
           </View>

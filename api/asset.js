@@ -25,3 +25,15 @@ export const shareAsset = async (token, id) => {
     .then(data => data)
     .catch(err => { throw err });
 }
+
+export const notifications = async (token, id) => {
+    const url = `${config.baseUrl}${config.notifications}`
+    const headers = {
+        "Authorization": `${token}`
+    }
+    return axios.get(url, {
+        headers
+    })
+    .then(data => data)
+    .catch(err => { throw err });
+}

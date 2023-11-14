@@ -176,11 +176,14 @@ const PuzzleFlow = ({setState}) => {
           return (
             <View style={styles.stepContainer}>
               <Image source={assetData.url ? { uri: assetData.url} : require('../assets/Resources/Images/temp.png')} style={styles.image} />
+              <View style={styles.successTextContainer}>
               <Text style={[styles.successText, {textAlign: 'center'}]}>Joy for you!!</Text>
               <View style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-evenly'}}>
                 <Button colorScheme={2} onPress={() => setState(0)}>Next Joy</Button>
                 <Button colorScheme={1} onPress={() => { setState(0); shareAsset(token, assetData.url ? assetData._id : '41224d776a326fb40f000001'); }}>Share <Ionicons name="share-social" size={17} color="#FFF" /></Button>
               </View>
+              </View>
+              
             </View>
           );
         case 4:

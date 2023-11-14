@@ -1,15 +1,31 @@
 // NotificationListComponent.js
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image,SafeAreaView, ActivityIndicator } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button } from './Button';
 import MysteryJoy from '../Screens/MysteryJoy';
 import Statements from '../Screens/Statements';
 import Puzzle from '../Screens/Puzzle';
 import Key from '../assets/Resources/Images/key.svg'
+import { getNotifications, getAssetWithId } from '../action/asset';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotificationListComponent = () => {
   const [step, setStep] = useState(0);
   const [counter, setCounter] = useState(5);
+  const dispatch = useDispatch()
+  const {notificationList, loading} = useSelector(state => state.asset)
+
+  useEffect(() => {
+      const netCall =  async () => {
+        const token = await AsyncStorage.getItem('token');
+        dispatch(getNotifications(token));
+      }
+
+      netCall();
+      
+  }, []);
+
   useEffect(() => {
     if (step === 2) {
       const interval = setTimeout(() => {
@@ -25,13 +41,12 @@ const NotificationListComponent = () => {
       }, 1000);
     }
     
-  }, [counter, step])
+  }, [counter, step]);
 
-  const notifications = [
-    {
-      text: 'You have been shared a joy'
-    }
-  ]
+const assetHandle = async (id) => {
+  const token = await AsyncStorage.getItem('token');
+  dispatch(getAssetWithId(token, id, setStep));
+}
 
 
 
@@ -39,14 +54,18 @@ const NotificationListComponent = () => {
     <>
       {step === 0 && <View style={styles.container}>
         <Text style={styles.headerText}>Notifications</Text>
-          {notifications.map((notification, index) => (
+        {loading && <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" />
+      </SafeAreaView>}
+        {!loading && notificationList.length === 0 && <Text style={[styles.text, {marginTop: 100}]}>No notifications...</Text>}
+          {!loading && notificationList.map((notification, index) => (
             <View
               key={index}
               style={styles.notification}
             >
               <Image style={{width: 50, height: 50}} source={require('../assets/Resources/Images/not.gif')} />
               <Text style={styles.notificationText}>{notification.text}</Text>
-              <Button onPress={() => setStep(1)} Styles={styles.Button} colorScheme={2}>View</Button>
+              <Button onPress={() => assetHandle(notification._id)} Styles={styles.Button} colorScheme={2}>View</Button>
             </View>
           ))}
         </View>}

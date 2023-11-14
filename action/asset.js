@@ -56,3 +56,55 @@ export const shareAsset = (token, id) => {
                 // })
             })
 }
+
+export const getNotifications = token => {
+    return dispatch => {
+        dispatch({type: "NOTIFICATIONS_LOAD"});
+        return api.notifications(token)
+                    .then(data => {
+                        console.log('not', data.data)
+                        dispatch({type: "NOTIFICATONS_SUCCESS", payload: []})
+                    })
+                    .catch(err => {
+                        dispatch({type: "NOTIFICATIONS_FAIL"});
+                        console.log(err.response.data)
+                    //     Toast.show({
+                    //         type: 'error',
+                    //         text1: 'Failed to Skip interest',
+                    //         text2: err.response.data.msg
+                    // })
+                })
+    }
+}
+
+export const getAssetWithId = (token, id, setStep) => {
+    return dispatch => {
+        dispatch({type: 'ASSET_LOAD'});
+        return api.randomAsset(token, id)
+            .then(async data => {
+                console.log(data?.data);
+                dispatch(getNotifications(token))
+                dispatch({type: 'ASSET_SUCCESS', payload: data?.data});
+                if (data?.data?.isMystery) {
+                    setStep(4);
+                } else {
+                    switch(data?.data?.openedWith) {
+                        case 0: setStep(2);
+                                break;
+                        case 1: setStep(1);
+                                break;
+                        case 2: setStep(3);
+                                break
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err.response.data);
+                dispatch({type: 'ASSET_FAIL'});
+                Toast.show({
+                    type: 'error',
+                    text1: 'Failed to fetch data'
+            })
+        })
+    }
+}

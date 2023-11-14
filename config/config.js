@@ -15,5 +15,6 @@ export const config = {
     commitments: '/commitmentandstatement/user/commitment',
     notifications: '/asset/share',
     assetWithId: '/asset',
-    shareAsset: '/asset/share'
+    shareAsset: '/asset/share',
+    completeCommitment: '/commitmentandstatement/complete'
 };

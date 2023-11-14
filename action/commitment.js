@@ -84,7 +84,8 @@ export const getAssignedCommitments = token => {
         dispatch({type: "COMMITMENT_LIST_LOAD"});
         return api.getCommitments(token)
             .then(data => {
-                dispatch({type: 'COMMITMENT_LIST_LOAD', payload: data});
+                console.log(data);
+                dispatch({type: 'COMMITMENT_LIST_SUCCESS', payload: data});
             })
             .catch(err => {
                 console.log(err.response.data);
@@ -96,3 +97,25 @@ export const getAssignedCommitments = token => {
             })
     }
 }
+
+export const completeCommitment = (token, id, setStep, setCurrentTask) => {
+    return dispatch => {
+        return api.completeCommitment(token, id)
+        .then(data => {
+            Toast.show({
+                type: 'success',
+                text1: 'Commitment completed successfully'
+            })
+            dispatch(getAssignedCommitments(token));
+            setStep(0);
+            setCurrentTask(null)
+        })
+        .catch(err => {
+            console.log(err.response.data);
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to complete commmitment'
+            })
+        })
+    }
+};

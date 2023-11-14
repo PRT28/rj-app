@@ -56,3 +56,13 @@ export const getCommitments = async token => {
     .then(data => data.data)
     .catch(err => { throw err });
 }
+
+export const completeCommitment = async (token, id) => {
+    const url = `${config.baseUrl}${config.completeCommitment}/${id}`;;
+    const headers = {
+        "Authorization": `${token}`
+    }
+    return axios.patch(url, {}, {headers})
+    .then(data => data.data)
+    .catch(err => { throw err });
+}
