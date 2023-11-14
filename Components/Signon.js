@@ -86,13 +86,13 @@ export function Signon({navigation, setSignonOpen}){
 }
 const Styles=StyleSheet.create({
     Content:{
-        top:'33%',
+        top:'25%',
         borderTopEndRadius:30,
         borderTopStartRadius:30,
         backgroundColor: '#FFF8F1',
         alignItems:"center",
         padding:'10%',
-        height:'100%'
+        height:'100%',
     },
     Heading:{
         color: '#1F2A37',

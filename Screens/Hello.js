@@ -32,7 +32,7 @@ const ClickableNonLinearItems = ({navigation}) => {
   const saveHandle = () => {
     const payload = []
     activeItems.map(d => payload.push(data[d]._id))
-    saveInterest(navigation, authData.user._id, payload, token);
+    saveInterest(navigation, authData._doc._id, payload, token);
   }
 
   const skipHandle = () => {

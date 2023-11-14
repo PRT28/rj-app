@@ -19,7 +19,7 @@ const PuzzleFlow = ({setState}) => {
   const [full, setFull] = useState(false);
   const {data: assetData} = useSelector(state => state.asset);
   const [help, setHelp] = useState(false);
-  console.log(data);
+  console.log('puzzle', data);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -39,6 +39,10 @@ const PuzzleFlow = ({setState}) => {
       const interval = setTimeout(() => {
         setStep(3);
       }, 5000);
+
+      return () => {
+        clearInterval(interval);
+      }
     }
   }, [step])
 
@@ -47,6 +51,10 @@ const PuzzleFlow = ({setState}) => {
       const interval = setInterval(() => {
         setCounter(counter - 1);
       }, 1000);
+
+      return () => {
+        clearInterval(interval);
+      }
     }
     
   }, [counter, step])

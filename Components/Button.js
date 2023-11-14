@@ -3,7 +3,7 @@ import { StyleSheet, Text,TouchableOpacity, Image, View } from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 import { Audio } from 'expo-av';
 import { useSelector } from "react-redux";
-export function Button({colorScheme,onPress,...props}){
+export function Button({colorScheme,onPress,styles, ...props}){
     const colorSchemes=[['#16B8D9','#9BEEFF','#16b8d9'],['#FF7F11','#FFFAF5','#FFFFFF']];
     const [sound, setSound] = useState();
     const {sound: playSound} = useSelector(state => state.asset);
@@ -29,7 +29,7 @@ export function Button({colorScheme,onPress,...props}){
       }, [sound]);
 
     return(
-        <TouchableOpacity style={{overflow: 'hidden'}} onPress={clickFunc}>
+        <TouchableOpacity style={[{overflow: 'hidden'}, styles]} onPress={clickFunc}>
             <LinearGradient colors={colorSchemes[colorScheme-1]} style={Styles.Button} locations={[0.81,0.97,1]}>
                 <View style={Styles.animation}>
                     <Image source={require('../assets/Resources/Images/button.gif')} />

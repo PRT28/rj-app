@@ -94,11 +94,11 @@ const CommitmentFlow = ({ setState }) => {
       case 1:
         return (
           <View style={[styles.stepContainer]}>
-            <Text style={[styles.text, { marginBottom: '10%' }]}>{commitment[0].suggestion_text}</Text>
+            <Text style={[styles.text, { marginBottom: '10%' }]}>{commitment[0]?.suggestion_text ? commitment[0]?.suggestion_text : 'Help your mom'}</Text>
             <Image source={require('../assets/Resources/Images/mom.png')} style={styles.image} />
             <View style={styles.footer}>
-              <Button Styles={styles.Button} colorScheme={1} onPress={handleNextStep}>My Own</Button>
-              <Button Styles={styles.Button} colorScheme={2} onPress={() => assignHandle(commitment[0].suggestion_text, ' ', ' ', false)}>Ok I'm ready</Button>
+              <Button styles={{marginRight: 10}} colorScheme={1} onPress={handleNextStep}>My Own</Button>
+              <Button styles={{marginLeft: 10}} colorScheme={2} onPress={() => assignHandle(commitment[0]?.suggestion_text ? commitment[0]?.suggestion_text : 'Help your mom', ' ', ' ', false)}>Ok I'm ready</Button>
             </View>
           </View>
         );
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 'auto',
-    width: '60%'
+    width: '70%'
   },
   Button: {
     marginTop: 0

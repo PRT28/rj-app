@@ -6,7 +6,6 @@ export const getPuzzle = (token)  => {
         dispatch({type: 'PUZZLE_LOAD'});
         return api.randomPuzzle(token)
             .then(async data => {
-                console.log('abcdd', data);
                 dispatch({type: 'PUZZLE_SUCCESS', payload: data});
             })
             .catch(err => {

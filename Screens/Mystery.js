@@ -63,7 +63,7 @@ export default function () {
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { setHelp(false); setType(4); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '70%', top: '70%'}}>
                                 <MJ />
-                                <Text style={{color: 'white', fontSize: 10}}>Mystery Jou=y</Text>
+                                <Text style={{color: 'white', fontSize: 10}}>Mystery Joy</Text>
                             </TouchableOpacity>
                         </View>
                         </Modal>
