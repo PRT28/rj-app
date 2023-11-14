@@ -1,5 +1,5 @@
 export const config = {
-    baseUrl: 'https://random-backend.digitalcodemasters.info',
+    baseUrl: 'https://random-joy.onrender.com',
     login: '/auth/login',
     register: '/auth/register',
     details: '/auth/details',
