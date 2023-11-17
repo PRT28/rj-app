@@ -44,7 +44,6 @@ export function Button({colorScheme,onPress,styles, ...props}){
 const Styles=StyleSheet.create({
     Button:{
             padding:15,
-            marginTop:15,
             borderRadius:30
     },
     Text:{

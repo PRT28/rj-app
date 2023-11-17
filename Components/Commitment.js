@@ -1,32 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, TouchableOpacity, StyleSheet, Image,SafeAreaView, ActivityIndicator  } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image,SafeAreaView, ActivityIndicator, RefreshControl  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
 import CommitmentComplete from './CommitmentComplete';
 import { getAssignedCommitments, completeCommitment } from '../action/commitment';
 import { shareAsset } from '../action/asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView } from 'react-native-gesture-handler';
+import Countdown from './Countdown';
 
 const Commitment = () => {
   const dispatch = useDispatch();
   const {commitmentList, loading} = useSelector(state => state.commitment);
   const {data:assetData} = useSelector(state => state.asset);
-  // const [commitmentList, setCommitmentList] = useState([
-  //   {
-  //     text: "i'll call my mom",
-  //     discription: "I'll call my mom"
-  //   },
-  //   {
-  //     text: "i'll call my mom",
-  //     discription: "I'll call my mom"
-  //   }
-  // ])
+  const [refreshing, setRefreshing] = React.useState(false);
   const {token} = useSelector(state => state.auth);
   const [step, setStep] = useState(0);
   const [currentTask, setCurrentTask] = useState();
-
-  const [counter, setCounter] = useState(5);
 
   useEffect(() => {
     const netCall =  async () => {
@@ -43,17 +34,18 @@ const Commitment = () => {
       const interval = setTimeout(() => {
         setStep(3);
       }, 5000);
+
+      return () => {
+        clearTimeout(interval)
+      }
     }
   }, [step])
 
-  useEffect(() => {
-    if (step === 2) {
-      const interval = setInterval(() => {
-        setCounter(counter - 1);
-      }, 1000);
-    }
-    
-  }, [counter, step])
+  const onRefresh = React.useCallback(async() => {
+    setRefreshing(true);
+    const token = await AsyncStorage.getItem('token');
+    dispatch(getAssignedCommitments(token)).then(() => setRefreshing(false));
+  }, []);
 
   const completeHandle = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -68,7 +60,7 @@ const Commitment = () => {
         <ActivityIndicator size="large" />
       </SafeAreaView>}
         {!loading && commitmentList.length === 0 && <Text style={[styles.successText, {marginTop: 100}]}>No Active commitments...</Text>}
-        {commitmentList.map((task) => (
+        <ScrollView refreshControl={ <RefreshControl onRefresh={onRefresh} />}>{commitmentList.map((task) => (
           <TouchableOpacity
             key={task._id}
             onPress={() => {setStep(1); setCurrentTask(task); }}
@@ -86,19 +78,15 @@ const Commitment = () => {
                 <Image style={{width: 60, height: 60}} source={require('../assets/Resources/Images/timer.gif')} />
             </View>
           </TouchableOpacity>
-        ))}
+        ))}</ScrollView>
+        
       </View>}
       {step === 1 && <CommitmentComplete setStep={setStep} />}
       {step === 2 && <View style={styles.stepContainer}>
             <Image source={require('../assets/Resources/Images/happy.png')} style={styles.image} />
             <View style={styles.successTextContainer}>
               <Text style={styles.successText}>Wohooo!!! I'm ecstatic about your task success. </Text>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 15}}>
-                <View style={styles.countContainer}>
-                  <Text style={styles.count}>{counter}</Text>
-                </View>
-                <Text style={{fontFamily: 'Recursive-Bold', fontSize: 16, marginLeft: 5}}>Sec</Text>
-              </View>
+              <Countdown />
             </View>
           </View>}
       {step === 3 && <View style={styles.stepContainer}>
@@ -192,7 +180,7 @@ const styles = StyleSheet.create({
     width: '98%',
     borderRadius: 8,
     backgroundColor: 'rgba(255,255,255,0.9)',
-    padding: 20
+    padding: 10
   },
   successText: {
     fontFamily: 'Recursive-Bold',

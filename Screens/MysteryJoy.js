@@ -9,6 +9,7 @@ import { assignCommitment } from '../action/commitment';
 import Help from '../assets/Resources/Images/help.svg'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Hr } from '../Components/Hr';
+import Back from '../assets/Resources/Images/back.svg'
 
 const CommitmentFlow = ({ setState }) => {
   const [step, setStep] = useState(0);
@@ -69,9 +70,9 @@ const CommitmentFlow = ({ setState }) => {
             <TouchableOpacity onPress={() => setHelp(true)}  style={{position: 'absolute', top:-20, right: 20}}>
               <Help />
             </TouchableOpacity>
-            <Text style={[styles.text, { marginBottom: '10%' }]}>You've been assigned a commitment</Text>
+            <Text style={[styles.text, { marginBottom: '10%', position: 'absolute', top: 20 }]}>You've been assigned a commitment</Text>
             <Image source={require('../assets/Resources/Images/believe.png')} style={styles.image} />
-            <Button colorScheme={2}  onPress={suggestCommitment}>Commit Now</Button>
+            <Button styles={{position: 'absolute', bottom: 0}} colorScheme={2}  onPress={suggestCommitment}>Commit Now</Button>
             <Modal visible={help} animationType="slide" onRequestClose={() => setHelp(false)} transparent={true}>
               <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View  style={styles.modal}>
@@ -94,7 +95,7 @@ const CommitmentFlow = ({ setState }) => {
       case 1:
         return (
           <View style={[styles.stepContainer]}>
-            <Text style={[styles.text, { marginBottom: '10%' }]}>{commitment[0]?.suggestion_text ? commitment[0]?.suggestion_text : 'Help your mom'}</Text>
+            <Text style={[styles.text, { position: 'absolute', top: -40, zIndex: 100 }]}>{commitment[0]?.suggestion_text ? commitment[0]?.suggestion_text : 'Help your mom'}</Text>
             <Image source={require('../assets/Resources/Images/mom.png')} style={styles.image} />
             <View style={styles.footer}>
               <Button styles={{marginRight: 10}} colorScheme={1} onPress={handleNextStep}>My Own</Button>
@@ -108,7 +109,7 @@ const CommitmentFlow = ({ setState }) => {
             <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}> 
                 <Image source={require('../assets/Resources/Images/fly.png')} style={full ? styles.fullImage : styles.image} />
             </TouchableOpacity>
-            <Text  style={styles.text}>I believe in you, I know you will do it</Text>
+            <Text  style={[styles.text, {marginTop: 20, marginBottom: 20, lineHeight: 30}]}>I believe in you, I know you will{"\n"}do it</Text>
             <TextInput
               style={styles.input}
               placeholder="Write your commitment here"
@@ -123,8 +124,13 @@ const CommitmentFlow = ({ setState }) => {
         );
       case 3:
         return (
-          <View style={[styles.stepContainer, {justifyContent: 'flex-start', alignItems: 'flex-start'}]}>
-            <Text style={[styles.text, {fontSize: 24, marginBottom: 15, padding: 10}]}>Suggestions</Text>
+          <View style={[styles.stepContainer, {justifyContent: 'flex-start', alignItems: 'flex-start', padding: 0}]}>
+            <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: -40, left: 10}}>
+              <TouchableOpacity onPress={() => setStep(2)}>
+                <Back />
+              </TouchableOpacity>
+              <Text style={[styles.text, {fontSize: 24, marginBottom: 15, padding: 10}]}>Suggestions</Text>
+            </View>
             {
               commitment.map((d, i) => i > 0 && <TouchableOpacity style={styles.suggestionWrapper} onPress={() => assignHandle(d.suggestion_text, ' ', ' ', false)}>
                 <View style={{position: 'absolute', top: 0, right: 0, backgroundColor: '#00D3FF', borderBottomLeftRadius: 4, padding: 8}}>
@@ -171,7 +177,7 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     alignItems: 'center',
     marginBottom: 20,
     backgroundColor: '#fff',
@@ -187,6 +193,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Recursive-Bold',
     fontSize: 20,
     fontWeight: 600,
+    flexWrap: 'wrap',
+    
   },
   categoryText: {
     color: '#000',
@@ -196,20 +204,22 @@ const styles = StyleSheet.create({
     fontWeight: 600,
   },
   input: {
-    height: 150,
-    width: 300,
+    height: 200,
+    width: 350,
     marginTop: 10,
-    borderRadius: 4,
+    borderRadius: 8,
     borderColor: '#FFD7B5',
     borderStyle: 'solid',
     borderWidth: 2,
-    padding: 20
+    padding: 20,
+    fontFamily: 'Recursive-Bold',
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     marginTop: 'auto',
-    width: '70%'
+    width: 350,
+    marginTop: 20
   },
   Button: {
     marginTop: 0

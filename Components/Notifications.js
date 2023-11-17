@@ -1,6 +1,6 @@
 // NotificationListComponent.js
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Image,SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image,SafeAreaView, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from './Button';
 import MysteryJoy from '../Screens/MysteryJoy';
@@ -48,6 +48,12 @@ const assetHandle = async (id) => {
   dispatch(getAssetWithId(token, id, setStep));
 }
 
+const onRefresh = React.useCallback(async() => {
+  setRefreshing(true);
+  const token = await AsyncStorage.getItem('token');
+  dispatch(getNotifications(token)).then(() => setRefreshing(false));
+}, []);
+
 
 
   return (
@@ -58,7 +64,8 @@ const assetHandle = async (id) => {
         <ActivityIndicator size="large" />
       </SafeAreaView>}
         {!loading && notificationList.length === 0 && <Text style={[styles.text, {marginTop: 100}]}>No notifications...</Text>}
-          {!loading && notificationList.map((notification, index) => (
+        <ScrollView refreshControl={ <RefreshControl onRefresh={onRefresh} />}>
+        {!loading && notificationList.map((notification, index) => (
             <View
               key={index}
               style={styles.notification}
@@ -68,6 +75,7 @@ const assetHandle = async (id) => {
               <Button onPress={() => assetHandle(notification._id)} Styles={styles.Button} colorScheme={2}>View</Button>
             </View>
           ))}
+        </ScrollView>
         </View>}
         {step === 1 && <MysteryJoy setState={setStep} />}
         {step === 2 && <Puzzle setState={setStep} />}
@@ -146,7 +154,7 @@ const styles = StyleSheet.create({
     width: '98%',
     borderRadius: 8,
     backgroundColor: 'rgba(255,255,255,0.9)',
-    padding: 20
+    padding: 10
   },
   successText: {
     fontFamily: 'Recursive-Bold',

@@ -1,16 +1,17 @@
 import { View, StyleSheet, Image, TouchableOpacity, Text } from "react-native";
 import { Button } from "./Button";
+import { ScrollView } from "react-native-gesture-handler";
 
 const CommitmentComplete = ({setStep}) => {
     return (
-        <View style={[styles.stepContainer]}>
+        <ScrollView contentContainerStyle={[styles.stepContainer]}>
           <Image source={require('../assets/Resources/Images/complete.png')} style={styles.image} />
           <Text style={[styles.text]}>Have you completed the{"\n"}commitment?</Text>
           <Button colorScheme={2}  onPress={() => setStep(2)}>Yes</Button>
           <TouchableOpacity onPress={() => setStep(4)}>
             <Text style={[styles.text, {marginTop: '5%'}]}>No</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, LayoutAnimation, Modal, Animated, Dimensions  } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, KeyboardAvoidingView, Modal, Animated, Dimensions  } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '../Components/Button';
 import { getSuggestion } from '../action/commitment';
@@ -12,6 +12,7 @@ import { Hr } from '../Components/Hr';
 import { shareAsset } from '../action/asset';
 import Help from '../assets/Resources/Images/help.svg'
 import { Ionicons } from '@expo/vector-icons';
+import Back from '../assets/Resources/Images/back.svg'
 
 const StatementFlow = ({setState}) => {
   const [step, setStep] = useState(0);
@@ -123,10 +124,10 @@ const StatementFlow = ({setState}) => {
             <TouchableOpacity onPress={() => setHelp(true)}  style={{position: 'absolute', top:-20, right: 20}}>
               <Help />
             </TouchableOpacity>
-            <Text style={[styles.text, { marginBottom: '10%' }]}>You've been assigned a statement</Text>
+            <Text style={[styles.text, { marginBottom: '10%', position: 'absolute', top: 20  }]}>You've been assigned a statement</Text>
             <Image source={require('../assets/Resources/Images/believe.png')} style={styles.image} />
             <Text style={[styles.text, {marginTop: '5%'}]}>Write a statement of commitment and follow it!</Text>
-            <Button colorScheme={2}  onPress={suggestStatment}>Write it Now</Button>
+            <Button colorScheme={2} styles={{position: 'absolute', bottom: 0}}  onPress={suggestStatment}>Write it Now</Button>
             <Modal visible={help} animationType="slide" onRequestClose={() => setHelp(false)} transparent={true}>
               <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View  style={styles.modal}>
@@ -148,33 +149,35 @@ const StatementFlow = ({setState}) => {
         )
       case 1:
         return (
-          <ScrollView automaticallyAdjustKeyboardInsets contentContainerStyle={[styles.stepContainer, {display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}]}>
-            <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
-                <Animated.Image source={require('../assets/Resources/Images/fly.png')} style={{width: animation.x, height: animation.y, position: full ? 'absolute' : 'relative', top: full ? -250 : 0, left: full ? -195 : 0}} />
-            </TouchableOpacity>
-            <Text style={[styles.text, { marginBottom: 10, marginTop: 20 }]}>{title}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Statement 1"
-              value={statements[0]}
-              onChangeText={(text) => setStatements([text, statements[1], statements[2]])}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Statement 2"
-              value={statements[1]}
-              onChangeText={(text) => setStatements([statements[0], text, statements[2]])}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Statement 3"
-              value={statements[2]}
-              onChangeText={(text) => setStatements([statements[0], statements[1], text])}
-            />
-            <View style={styles.footer}>
-              <Button Styles={styles.Button} colorScheme={2} onPress={() => assignHandle(true, statements[0])}>Save</Button>
-              <Button Styles={styles.Button} colorScheme={1} onPress={() => setStep(4)}>Suggestions</Button>
-            </View>
+          <ScrollView contentContainerStyle={{flex: 1}}>
+            <KeyboardAvoidingView style={[styles.stepContainer, {display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: 0}]} behavior="position">
+              <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
+                  <Animated.Image source={require('../assets/Resources/Images/fly.png')} style={{width: animation.x, height: animation.y, position: full ? 'absolute' : 'relative', top: full ? -250 : 0, left: full ? -195 : 0}} />
+              </TouchableOpacity>
+              <Text style={[styles.text, { marginBottom: 10, marginTop: 20 }]}>{title}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Statement 1"
+                value={statements[0]}
+                onChangeText={(text) => setStatements([text, statements[1], statements[2]])}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Statement 2"
+                value={statements[1]}
+                onChangeText={(text) => setStatements([statements[0], text, statements[2]])}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Statement 3"
+                value={statements[2]}
+                onChangeText={(text) => setStatements([statements[0], statements[1], text])}
+              />
+              <View style={styles.footer}>
+                <Button Styles={styles.Button} colorScheme={2} onPress={() => assignHandle(true, statements[0])}>Save</Button>
+                <Button Styles={styles.Button} colorScheme={1} onPress={() => setStep(4)}>Suggestions</Button>
+              </View>
+            </KeyboardAvoidingView>
           </ScrollView>
         );
       case 2:
@@ -210,7 +213,12 @@ const StatementFlow = ({setState}) => {
         case 4:
           return (
             <View style={[styles.stepContainer, {justifyContent: 'flex-start', alignItems: 'flex-start'}]}>
+              <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: -40, left: 10}}>
+              <TouchableOpacity onPress={() => setStep(2)}>
+                <Back />
+              </TouchableOpacity>
               <Text style={[styles.text, {fontSize: 24, marginBottom: 15, padding: 10}]}>Suggestions</Text>
+            </View>
               {
                 statement.map((d, i) => i > 0 && <TouchableOpacity style={styles.suggestionWrapper} onPress={() => { setTitle(d.suggestion_text); setStep(1); }}>
                   <View style={{position: 'absolute', top: 0, right: 0, backgroundColor: '#00D3FF', borderBottomLeftRadius: 4, padding: 8}}>
@@ -261,7 +269,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     backgroundColor: '#fff',
-    width: '100%'
+    width: '100%',
+    padding: 20
   },
   categoryText: {
     color: '#000',
@@ -272,7 +281,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 80,
-    width: 300,
+    width: 350,
     marginTop: 10,
     borderRadius: 4,
     borderColor: '#FFD7B5',
@@ -318,10 +327,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     marginTop: 'auto',
     display: 'flex',
-    width: '60%',
+    width: 350,
+    marginTop: 20
   },
   suggestionWrapper: {
     backgroundColor: '#DEF6FB',

@@ -9,13 +9,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Hr } from '../Components/Hr';
 import Help from '../assets/Resources/Images/help.svg'
 import { Ionicons } from '@expo/vector-icons';
+import Countdown from '../Components/Countdown';
+import { SafeAreaView } from 'react-native';
 
 const PuzzleFlow = ({setState}) => {
   const [step, setStep] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const dispatch = useDispatch();
   const {data} = useSelector(state => state.puzzle);
-  const [counter, setCounter] = useState(5);
   const [full, setFull] = useState(false);
   const {data: assetData} = useSelector(state => state.asset);
   const [help, setHelp] = useState(false);
@@ -47,19 +48,6 @@ const PuzzleFlow = ({setState}) => {
       }
     }
   }, [step])
-
-  useEffect(() => {
-    if (step === 2) {
-      const interval = setInterval(() => {
-        setCounter(counter - 1);
-      }, 1000);
-
-      return () => {
-        clearInterval(interval);
-      }
-    }
-    
-  }, [counter, step])
 
 
 
@@ -98,14 +86,14 @@ const PuzzleFlow = ({setState}) => {
     switch (step) {
       case 0:
         return (
-          <View style={[styles.stepContainer]}>
+          <SafeAreaView style={[styles.stepContainer]}>
             <TouchableOpacity onPress={() => setHelp(true)}  style={{position: 'absolute', top:-20, right: 20}}>
               <Help />
             </TouchableOpacity>
-            <Text style={[styles.text, { marginBottom: '10%' }]}>You've been assigned a puzzle</Text>
+            <Text style={[styles.text, { marginBottom: '10%', position: 'absolute', top: 20  }]}>You've been assigned a puzzle</Text>
             <Image source={require('../assets/Resources/Images/believe.png')} style={styles.image} />
             <Text style={[styles.text, {marginTop: '5%'}]}>Solve a puzzle to win...!</Text>
-            <Button colorScheme={2}  onPress={handleNextStep}>Solve it</Button>
+            <Button colorScheme={2} styles={{position: 'absolute', bottom: 0}}  onPress={handleNextStep}>Solve it</Button>
             <Modal visible={help} animationType="slide" onRequestClose={() => setHelp(false)} transparent={true}>
               <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View  style={styles.modal}>
@@ -123,15 +111,15 @@ const PuzzleFlow = ({setState}) => {
                 </View>
               </View>
             </Modal>
-          </View>
+          </SafeAreaView>
       );
       case 1:
         return (
-          <View style={styles.stepContainer}>
+          <View style={[styles.stepContainer, {justifyContent: 'flex-start'}]}>
             <TouchableOpacity style={{zIndex: 100}} onPress={() => toggleBox()}>
                 <Animated.Image source={require('../assets/Resources/Images/fly.png')} style={{width: animation.x, height: animation.y, position: full ? 'absolute' : 'relative', top: full ? -250 : 0, left: full ? -195 : 0}} />
             </TouchableOpacity>
-            <Text style={styles.text}>{data.question}</Text>
+            <Text style={[styles.text, {marginVertical: 20}]}>{data.question}</Text>
             {data.questionType === 1 && <>
               <TouchableOpacity
                 style={selectedOption === 'true' ? styles.selectedOption : styles.option}
@@ -172,7 +160,7 @@ const PuzzleFlow = ({setState}) => {
                 <Text style={[styles.text, {fontSize: 18, fontWeight: 'normal'}]}>{data.optionD}</Text>
               </TouchableOpacity>
             </>}
-            <Button colorScheme={2} onPress={handleNextStep}>Save</Button>
+            <Button  styles={{position: 'absolute', bottom: 0}} colorScheme={2} onPress={handleNextStep}>Save</Button>
           </View>
         );
         case 2:
@@ -181,12 +169,7 @@ const PuzzleFlow = ({setState}) => {
               <Image source={require('../assets/Resources/Images/happy.png')} style={styles.image} />
               <View style={styles.successTextContainer}>
                 <Text style={styles.successText}>Wohooo!!! I'm ecstatic about your task success. </Text>
-                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 15}}>
-                  <View style={styles.countContainer}>
-                    <Text style={styles.count}>{counter}</Text>
-                  </View>
-                  <Text style={{fontFamily: 'Recursive-Bold', fontSize: 16, marginLeft: 5}}>Sec</Text>
-                </View>
+                <Countdown />
               </View>
             </View>
           );
@@ -229,17 +212,18 @@ const PuzzleFlow = ({setState}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    paddingTop: 60
   },
   stepContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     alignItems: 'center',
     marginBottom: 20,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    width: '100%',
   },
   fullImage: {
     width: 350,

@@ -1,5 +1,5 @@
-import { Platform, UIManager } from 'react-native';
-import { useEffect,useState } from 'react';
+import { Platform, UIManager, BackHandler, ToastAndroid } from 'react-native';
+import React, { useEffect,useState } from 'react';
 import * as Font from 'expo-font';
 import { Landing } from './Screens/Landing';
 import ClickableNonLinearItems from './Screens/Hello';
@@ -40,6 +40,18 @@ export default function App() {
       }
     }
     prepare();
+
+    const handleBackButton = () => {
+      ToastAndroid.show('Please use internal app back button for in app navigation', ToastAndroid.SHORT);
+      return true;
+  }
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+  return () => {
+    BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+  }
+
   }, []);
 
   if (fontLoaded){

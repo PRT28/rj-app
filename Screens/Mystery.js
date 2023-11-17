@@ -14,6 +14,7 @@ import MJ from '../assets/Resources/Images/mj.svg';
 import State from '../assets/Resources/Images/state.svg';
 import Commit from '../assets/Resources/Images/commit.svg';
 import Puzz from '../assets/Resources/Images/puzzle.svg'
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function () {
     const [state, setState] = useState(0);
@@ -26,6 +27,11 @@ export default function () {
     const getAsset = async () => {
         const token = await AsyncStorage.getItem('token')
         dispatch(getRandomAsset(token, setState, type))
+    }
+
+    const getAssetWithType = async (t) => {
+        const token = await AsyncStorage.getItem('token')
+        dispatch(getRandomAsset(token, setState, t))
     }
 
     const handleNextStep = () => {
@@ -41,37 +47,39 @@ export default function () {
   
             if (state === 0) {
                 return (
-                    <View style={[styles.container]}>
+                    <SafeAreaView style={styles.container}>
+                        <ScrollView contentContainerStyle={[styles.container]}>
                         <Image source={require('../assets/Resources/Images/start.png')} style={styles.image} />
                         <Text style={styles.text}>Begin your fun journey with a random surprise</Text>
                         <Modal visible={help} animationType="none" onRequestClose={() => setHelp(false)} transparent={true}>
                         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                            <TouchableOpacity onPress={() => { setHelp(false); setType(1); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center', position: 'absolute', left: '30%', top: '60%'}}>
+                            <TouchableOpacity onPress={() => { setHelp(false); getAssetWithType(1); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center', position: 'absolute', left: '30%', top: '60%'}}>
                                 <Commit />
                                 <Text style={{color: 'white', fontSize: 10}}>Commit</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setHelp(false); setType(0); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '55%', top: '60%'}}>
+                            <TouchableOpacity onPress={() => { setHelp(false); getAssetWithType(0); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '55%', top: '60%'}}>
                                 <Puzz />
                                 <Text style={{color: 'white', fontSize: 10}}>Puzzle</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setHelp(false); setType(2); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '20%', top: '70%'}}>
+                            <TouchableOpacity onPress={() => { setHelp(false); getAssetWithType(2); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '20%', top: '70%'}}>
                                 <State />
                                 <Text style={{color: 'white', fontSize: 10}}>Statement</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setHelp(false)} style={{ position: 'absolute', left: '47%', top: '73%'}}>
                                 <Type />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { setHelp(false); setType(4); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '70%', top: '70%'}}>
+                            <TouchableOpacity onPress={() => { setHelp(false); getAssetWithType(4); }} style={{borderRadius: 50, height: 70, width: 70, backgroundColor: '#FF7F11', alignItems: 'center', justifyContent: 'center' , position: 'absolute', left: '70%', top: '70%'}}>
                                 <MJ />
                                 <Text style={{color: 'white', fontSize: 10}}>Mystery Joy</Text>
                             </TouchableOpacity>
                         </View>
                         </Modal>
-                        {!help && <TouchableOpacity onPress={() => setHelp(true)}>
+                        {!help && <TouchableOpacity style={{marginTop: 10}} onPress={() => setHelp(true)}>
                             <Type />
                         </TouchableOpacity>}
-                        <Button onPress={() => getAsset()} colorScheme={2}>Start Here</Button>
-                    </View>
+                        <Button styles={{marginTop: 5}} onPress={() => getAsset()} colorScheme={2}>Start Here</Button>
+                    </ScrollView>
+                    </SafeAreaView>
                 )
             } else if (state === 1) {
                 return <MysteryJoy setState={setState} />
@@ -81,10 +89,10 @@ export default function () {
                 return <Statements setState={setState} />
             } else if (state === 4) {
                 return (
-                <SafeAreaView style={[styles.stepContainer]}>
+                <SafeAreaView style={[styles.stepContainer, {paddingTop: 30}]}>
                     <Image source={require('../assets/Resources/Images/gift.png')} style={styles.image} />
                     <Text style={styles.text}>A gift from a Friend</Text>
-                    <TouchableOpacity onPress={handleNextStep}>
+                    <TouchableOpacity style={{marginTop: 20}} onPress={handleNextStep}>
                         <Key />
                     </TouchableOpacity>
                 </SafeAreaView>
@@ -97,7 +105,8 @@ const styles=StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#fff',
-        padding: 10
+        padding: 10,
+        paddingTop: 20
       },
       text: {
         color: '#000',
@@ -105,7 +114,7 @@ const styles=StyleSheet.create({
         fontFamily: 'Recursive-Bold',
         fontSize: 20,
         fontWeight: 600,
-        marginTop: 20,
+        marginTop: 10,
         flexWrap: 'wrap'
       },
       stepContainer: {

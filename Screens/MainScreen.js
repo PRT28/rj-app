@@ -30,6 +30,7 @@ const MainScreen = () => {
   const dispatch =useDispatch()
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false); 
+  const [profileImage, setProfileImage] = useState(null);
   console.log(data, 'data')
   
 
@@ -55,7 +56,15 @@ const MainScreen = () => {
   }, []);
 
   useEffect(() => {
+    const setProfileImg = async () => {
+      console.log(`profile_${data.user._id}`)
+      const img = await AsyncStorage.getItem(`profile_${data.user._id}`);
+      console.log(img, 'img');
+      setProfileImage(img);
+    }
+
     setUser(data);
+    setProfileImg();
     console.log(data)
   }, [data])
 
@@ -63,6 +72,14 @@ const MainScreen = () => {
     const { sound } = await Audio.Sound.createAsync( require('../assets/Resources/Sound/button.mp3'));
     await sound.playAsync();
   }
+
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        
+      }),
+    [navigation]
+  );
 
 
   return (
@@ -82,7 +99,7 @@ const MainScreen = () => {
               focused ? <HomeFocused /> : <Home />
             ),
             tabBarStyle: {
-              padding: 25
+              padding: 35
             },
             headerShown: false
           }}
@@ -98,7 +115,7 @@ const MainScreen = () => {
               focused ? <GameFocused /> : <Game />
             ),
             tabBarStyle: {
-              padding: 25
+              padding: 35
             },
             headerShown: false
           }}
@@ -115,7 +132,7 @@ const MainScreen = () => {
               focused ? <NotificationFocused /> : <Notification />
             ),
             tabBarStyle: {
-              padding: 25
+              padding: 35
             },
             headerShown: false
           }}
@@ -124,14 +141,14 @@ const MainScreen = () => {
           name="     "
           children={() => {
             playSound();
-            return <ProfileComponent user={data.user} />;
+            return <ProfileComponent user={data.user} profileImage={profileImage} />;
           }}
           options={{
             tabBarIcon: ({ focused }) => (
               focused ? <ProfileFocused /> : <Profile />
             ),
             tabBarStyle: {
-              padding: 25
+              padding: 35
             },
             headerShown: false
           }}

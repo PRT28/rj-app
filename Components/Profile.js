@@ -9,10 +9,12 @@ import { useNavigation } from '@react-navigation/native';
 import Arrow from '../assets/Resources/Images/arrow-right.svg';
 import * as ImagePicker from 'expo-image-picker'
 import {setSound} from '../action/asset';
+import { ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileComponent = ({user}) => {
+const ProfileComponent = ({user, profileImage}) => {
   const navigation=useNavigation();
-  const [image, setImage] = useState('https://via.placeholder.com/150');
+  const [image, setImage] = useState(profileImage ? profileImage : 'https://via.placeholder.com/150');
   const dispatch = useDispatch()
   const {sound} = useSelector(state => state.asset);
 
@@ -42,6 +44,7 @@ const ProfileComponent = ({user}) => {
     console.log(result);
 
     if (!result.canceled) {
+      await AsyncStorage.setItem(`profile_${user._id}`, result.assets[0].uri)
       setImage(result.assets[0].uri);
     }
   };
@@ -76,7 +79,7 @@ const ProfileComponent = ({user}) => {
 
         <View style={styles.statusIndicator}>
           <Text style={{fontFamily: 'Recursive-Bold',}}>Status:</Text>
-          <View style={[styles.dot, { backgroundColor: user.preferences === 0 ?'green' : 'red' }]} />
+          <Text style={{fontFamily: 'Recursive-Bold', marginLeft: 6}}>{user.preferences === 0 ? 'Active' : 'Mute'}</Text>
         </View>
 
         <View style={styles.statsContainer}>
@@ -86,7 +89,7 @@ const ProfileComponent = ({user}) => {
         </View>
       </View>
 
-      <View style={styles.menu}>
+      <ScrollView style={styles.menu}>
         <View style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', padding: 10}}>
           <Text style={styles.menuItemLabel}>Sound VFX</Text>   
           <Switch
@@ -102,7 +105,7 @@ const ProfileComponent = ({user}) => {
         <MenuItem icon="md-share" label="Share App" onClick={() => shareApp()} />
         <Hr />
         <MenuItem icon="md-share" label="Logout" onClick={() => logout(navigation)} />
-      </View>
+      </ScrollView>
     </View>
   );
 };
